@@ -14,8 +14,9 @@ on:
 
 permissions:
   contents: write
-  packages: write
+  packages: read
   pull-requests: write
+  id-token: write
 
 jobs:
   release:
@@ -31,6 +32,7 @@ jobs:
           cache: pnpm
           registry-url: 'https://registry.npmjs.org/'
           scope: '@authzkit'
+          always-auth: true
       - name: Prove npm auth
         run: |
           npm config get registry
@@ -41,7 +43,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Build packages
-        run: pnpm -r --filter './packages/*' run build
+        run: pnpm -r --sort --workspace-concurrency=1 --filter '{packages/*}' run build
       - name: Create Release Pull Request or Publish
         uses: changesets/action@v1
         with:
