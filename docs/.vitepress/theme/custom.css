@@ -54,14 +54,15 @@
 }
 
 /* Footer uses layout-bottom for all pages; adjust on docs to align with sidenav */
-.VPDoc .authzkit-footer {
+/* When on docs pages (footer-docs class), align footer flush to sidebar and bottom */
+.authzkit-footer.footer-docs {
   margin: 0;
   width: calc(100% - var(--vp-sidebar-width, 272px));
   margin-left: var(--vp-sidebar-width, 272px);
 }
 
 @media (max-width: 960px) {
-  .VPDoc .authzkit-footer {
+  .authzkit-footer.footer-docs {
     width: 100%;
     margin-left: 0;
   }
