@@ -52,3 +52,20 @@
 .code-content code {
   color: #d4d4d4 !important;
 }
+
+/* Footer layout fixes: prevent overlap with sidebar/outline on doc pages */
+.VPDoc .authzkit-footer {
+  position: relative;
+  z-index: 0;
+  margin-left: var(--vp-sidebar-width, 272px);
+  margin-right: var(--vp-aside-width, 288px);
+}
+
+@media (max-width: 960px) {
+  .VPDoc .authzkit-footer {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* Revert to standard VitePress sidebar behavior (no custom collapse) */
