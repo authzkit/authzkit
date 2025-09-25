@@ -6,8 +6,9 @@
   "packageManager": "pnpm@10.0.0",
   "scripts": {
     "build": "pnpm typecheck-all && pnpm -r --filter ./packages/* run build",
+    "build-only": "pnpm -r --filter ./packages/* run build",
     "clean": "pnpm typecheck-all && pnpm -r --filter ./packages/* run clean",
-    "typecheck": "pnpm -r --filter \"./packages/*\" run typecheck",
+    "typecheck": "pnpm build-only && pnpm -r --filter \"./packages/*\" run typecheck",
     "typecheck-all": "pnpm typecheck",
     "lint": "pnpm typecheck-all && eslint .",
     "format": "pnpm typecheck-all && prettier --check .",
