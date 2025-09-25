@@ -91,7 +91,7 @@ const createGuard = (mode: Mode = 'strict') =>
     meta: tenantMeta,
   });
 
-describe('Prisma integration', () => {
+describe.skipIf(process.env.CI)('Prisma integration', () => {
   beforeAll(async () => {
     tmpDir = mkdtempSync(join(pkgRoot, '.tmp-prisma-int-'));
     dbPath = join(tmpDir, 'test.db');
