@@ -1,6 +1,6 @@
 {
   "name": "@authzkit/prisma-tenant-guard-generator",
-  "version": "1.0.0-rc.19",
+  "version": "1.0.1",
   "description": "Generate tenant guard metadata from Prisma schemas",
   "keywords": [
     "prisma",
@@ -10,7 +10,7 @@
   ],
   "license": "Apache-2.0",
   "author": "AuthzKit Contributors",
-  "homepage": "https://authzkit.dev",
+  "homepage": "https://authzkit.github.io/authzkit",
   "repository": {
     "type": "git",
     "url": "https://github.com/authzkit/authzkit.git",

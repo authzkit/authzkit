@@ -1,6 +1,6 @@
 {
   "name": "@authzkit/prisma-tenant-guard",
-  "version": "1.0.0-rc.31",
+  "version": "1.0.1",
   "description": "Tenant guardrails for Prisma clients with assist/assert/strict enforcement and CLI tooling",
   "keywords": [
     "prisma",
@@ -11,7 +11,7 @@
   ],
   "license": "Apache-2.0",
   "author": "AuthzKit Contributors",
-  "homepage": "https://authzkit.dev",
+  "homepage": "https://authzkit.github.io/authzkit",
   "repository": {
     "type": "git",
     "url": "https://github.com/authzkit/authzkit.git",

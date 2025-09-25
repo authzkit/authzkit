@@ -1,6 +1,6 @@
 {
   "name": "@authzkit/core",
-  "version": "1.0.0-rc.19",
+  "version": "1.0.1",
   "description": "Type-safe authorization policies that generate database filters and UI guards automatically",
   "keywords": [
     "authorization",
@@ -13,7 +13,7 @@
   ],
   "license": "Apache-2.0",
   "author": "AuthzKit Contributors",
-  "homepage": "https://authzkit.dev",
+  "homepage": "https://authzkit.github.io/authzkit",
   "repository": {
     "type": "git",
     "url": "https://github.com/authzkit/authzkit.git",
