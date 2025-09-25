@@ -1,6 +1,6 @@
 {
   "name": "@authzkit/prisma-tenant-guard",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Tenant guardrails for Prisma clients with assist/assert/strict enforcement and CLI tooling",
   "keywords": [
     "prisma",

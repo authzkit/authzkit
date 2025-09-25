@@ -1,6 +1,6 @@
 {
   "name": "@authzkit/prisma-tenant-guard-generator",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Generate tenant guard metadata from Prisma schemas",
   "keywords": [
     "prisma",

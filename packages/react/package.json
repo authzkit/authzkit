@@ -1,6 +1,6 @@
 {
   "name": "@authzkit/react",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "React components for declarative authorization UI with type-safe policy decisions",
   "license": "Apache-2.0",
   "keywords": [
