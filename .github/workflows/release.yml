@@ -35,5 +35,7 @@ jobs:
         with:
           publish: pnpm release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Prefer a PAT if provided to allow PR creation when org repos disallow GITHUB_TOKEN PRs
+          # Set one of these secrets in repo/org settings: CHANGESETS_TOKEN or GH_PAT (scopes: repo)
+          GITHUB_TOKEN: ${{ secrets.CHANGESETS_TOKEN || secrets.GH_PAT || secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
