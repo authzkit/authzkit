@@ -1,0 +1,13 @@
+<svg width="144" height="40" viewBox="0 0 144 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="authzkitGradient" x1="0" y1="20" x2="144" y2="20" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6366F1" />
+      <stop offset="0.5" stop-color="#22D3EE" />
+      <stop offset="1" stop-color="#14B8A6" />
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="32" height="32" rx="8" fill="#0F172A" />
+  <path d="M18 12L12 20L18 28L24 20L18 12Z" fill="url(#authzkitGradient)" />
+  <text x="48" y="26" font-family="'Inter', sans-serif" font-style="normal" font-weight="600" font-size="20" letter-spacing="0.1em" fill="#0F172A">AUTHZKIT</text>
+  <text x="48" y="34" font-family="'Inter', sans-serif" font-style="normal" font-weight="500" font-size="10" letter-spacing="0.3em" fill="#0F172A">POLICY ENGINE</text>
+</svg>

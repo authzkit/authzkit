@@ -1,0 +1,71 @@
+{
+  "name": "@authzkit/prisma-tenant-guard",
+  "version": "1.0.0-rc.31",
+  "description": "Tenant guardrails for Prisma clients with assist/assert/strict enforcement and CLI tooling",
+  "keywords": [
+    "prisma",
+    "tenant",
+    "multi-tenant",
+    "rls",
+    "authzkit"
+  ],
+  "license": "Apache-2.0",
+  "author": "AuthzKit Contributors",
+  "homepage": "https://authzkit.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/authzkit/authzkit.git",
+    "directory": "packages/prisma-tenant-guard"
+  },
+  "bugs": {
+    "url": "https://github.com/authzkit/authzkit/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "authzkit-tenant-guard": "./dist/cli.js"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js",
+      "require": "./dist/cli.cjs"
+    },
+    "./zod": {
+      "types": "./dist/zod.d.ts",
+      "import": "./dist/zod.js",
+      "require": "./dist/zod.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts src/cli.ts src/zod.ts --dts --format esm,cjs",
+    "clean": "rimraf dist",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "test": "vitest run",
+    "dev": "tsup src/index.ts src/cli.ts src/zod.ts --dts --format esm,cjs --watch"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "peerDependencies": {
+    "@prisma/client": "^5.20.0 || ^6.0.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "zod": "^3.25.0",
+    "@prisma/client": "^6.16.2",
+    "prisma": "^6.16.2"
+  }
+}

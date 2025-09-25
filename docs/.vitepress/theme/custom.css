@@ -1,0 +1,54 @@
+/* Hide default VitePress hero when using custom hero */
+.VPHome .VPHero {
+  display: none;
+}
+
+/* Ensure custom hero shows */
+.custom-hero-page .custom-hero {
+  display: block;
+}
+
+/* Code syntax highlighting for dark theme */
+.code-content .language-typescript {
+  color: #d4d4d4;
+}
+
+/* Hero code syntax highlighting */
+.code-content .token.keyword {
+  color: #569cd6 !important;
+  font-weight: normal;
+}
+
+.code-content .token.string {
+  color: #ce9178 !important;
+}
+
+.code-content .token.comment {
+  color: #6a9955 !important;
+  font-style: italic;
+}
+
+.code-content .token.function {
+  color: #dcdcaa !important;
+}
+
+.code-content .token.variable {
+  color: #9cdcfe !important;
+}
+
+.code-content .token.operator {
+  color: #d4d4d4 !important;
+}
+
+.code-content .token.punctuation {
+  color: #d4d4d4 !important;
+}
+
+/* Ensure the base text color */
+.code-content pre {
+  color: #d4d4d4 !important;
+}
+
+.code-content code {
+  color: #d4d4d4 !important;
+}

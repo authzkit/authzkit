@@ -1,0 +1,16 @@
+coverage
+dist
+.DS_Store
+.idea
+*.log
+node_modules
+pnpm-debug.log
+.tmp/
+.vscode
+.next
+.env*
+*.sqlite
+*.db
+# VitePress build + cache
+**/.vitepress/dist
+**/.vitepress/cache

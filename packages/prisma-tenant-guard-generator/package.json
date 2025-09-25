@@ -1,0 +1,73 @@
+{
+  "name": "@authzkit/prisma-tenant-guard-generator",
+  "version": "1.0.0-rc.19",
+  "description": "Generate tenant guard metadata from Prisma schemas",
+  "keywords": [
+    "prisma",
+    "tenant",
+    "generator",
+    "authzkit"
+  ],
+  "license": "Apache-2.0",
+  "author": "AuthzKit Contributors",
+  "homepage": "https://authzkit.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/authzkit/authzkit.git",
+    "directory": "packages/prisma-tenant-guard-generator"
+  },
+  "bugs": {
+    "url": "https://github.com/authzkit/authzkit/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "authzkit-tenant-guard-gen": "./dist/generator.js"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js",
+      "require": "./dist/cli.cjs"
+    },
+    "./generator": {
+      "types": "./dist/generator.d.ts",
+      "import": "./dist/generator.js",
+      "require": "./dist/generator.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup --config tsup.config.ts",
+    "clean": "rimraf dist",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "test": "vitest run",
+    "dev": "tsup --config tsup.config.ts --watch"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "peerDependencies": {
+    "prisma": "^5.20.0"
+  },
+  "dependencies": {
+    "@prisma/generator-helper": "^6.16.2",
+    "@prisma/internals": "^6.16.2",
+    "kleur": "^4.1.5"
+  },
+  "devDependencies": {
+    "@authzkit/prisma-tenant-guard": "workspace:*",
+    "prisma": "^5.22.0"
+  }
+}
