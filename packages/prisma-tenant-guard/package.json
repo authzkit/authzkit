@@ -55,6 +55,7 @@
   "scripts": {
     "build": "tsup src/index.ts src/cli.ts src/zod.ts --dts --format esm,cjs",
     "clean": "rimraf dist",
+    "prepublishOnly": "pnpm build",
     "typecheck": "tsc -p tsconfig.build.json --noEmit",
     "test": "vitest run",
     "dev": "tsup src/index.ts src/cli.ts src/zod.ts --dts --format esm,cjs --watch"

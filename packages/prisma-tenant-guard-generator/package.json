@@ -54,6 +54,7 @@
   "scripts": {
     "build": "tsup --config tsup.config.ts",
     "clean": "rimraf dist",
+    "prepublishOnly": "pnpm build",
     "typecheck": "tsc -p tsconfig.build.json --noEmit",
     "test": "vitest run",
     "dev": "tsup --config tsup.config.ts --watch"

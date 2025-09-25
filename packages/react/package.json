@@ -44,6 +44,7 @@
   "scripts": {
     "build": "tsup src/index.tsx --format esm,cjs --dts",
     "clean": "rimraf dist",
+    "prepublishOnly": "pnpm build",
     "typecheck": "tsc -p tsconfig.build.json --noEmit",
     "test": "vitest run",
     "dev": "tsup src/index.tsx --format esm,cjs --dts --watch"
