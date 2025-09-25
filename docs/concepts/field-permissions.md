@@ -56,11 +56,11 @@ Different roles can have different read permissions for the same action:
 
 ```typescript
 const policy = definePolicy<Actions>({
-  rules: [
+  byAction: {
+    viewUser: [
     // Admins see everything
     {
       id: 'admin-view-user-full',
-      action: 'viewUser',
       effect: 'allow',
       when: ({ subject }) => subject.role === 'admin',
       readMask: {
@@ -78,7 +78,6 @@ const policy = definePolicy<Actions>({
     // Users see limited profile
     {
       id: 'user-view-user-limited',
-      action: 'viewUser',
       effect: 'allow',
       when: ({ subject, resource }) =>
         subject.role === 'user' && subject.id === resource.id,
@@ -95,7 +94,6 @@ const policy = definePolicy<Actions>({
     // Guests see minimal info
     {
       id: 'guest-view-user-minimal',
-      action: 'viewUser',
       effect: 'allow',
       when: ({ subject }) => subject.role === 'guest',
       readMask: {
@@ -106,6 +104,7 @@ const policy = definePolicy<Actions>({
       reason: 'guest-access'
     }
   ]
+  }
 })
 ```
 
@@ -176,11 +175,11 @@ Different roles have different write capabilities:
 
 ```typescript
 const policy = definePolicy<Actions>({
-  rules: [
+  byAction: {
+    editUser: [
     // Admins can edit most fields
     {
       id: 'admin-edit-user',
-      action: 'editUser',
       effect: 'allow',
       when: ({ subject }) => subject.role === 'admin',
       writeMask: {
@@ -196,7 +195,6 @@ const policy = definePolicy<Actions>({
     // Users can only edit their own basic info
     {
       id: 'user-edit-own',
-      action: 'editUser',
       effect: 'allow',
       when: ({ subject, resource }) => subject.id === resource.id,
       writeMask: {
@@ -212,7 +210,6 @@ const policy = definePolicy<Actions>({
     // Moderators can edit users in their tenant
     {
       id: 'moderator-edit-tenant-user',
-      action: 'editUser',
       effect: 'allow',
       when: ({ subject, resource }) =>
         subject.role === 'moderator' && subject.tenantId === resource.tenantId,
@@ -224,7 +221,8 @@ const policy = definePolicy<Actions>({
       },
       reason: 'moderator-edit'
     }
-  ]
+    ]
+  }
 })
 ```
 
@@ -366,55 +364,14 @@ type User = {
 
 ## Database Integration
 
-AuthzKit can integrate with ORMs to apply field masks at the database level:
+AuthzKit does not ship ORM-specific “select” or “where” builders. Apply read masks in your serialization layer (see applyReadMask above), and handcraft ORM selects/filters as needed for your data model.
 
-### Prisma Integration
+Example flow:
 
-```typescript
-// Generate Prisma select based on read mask
-function buildPrismaSelect(readMask?: FieldMask<User>) {
-  if (!readMask) return true  // Select all if no mask
-
-  const select: Prisma.UserSelect = {}
-  for (const [field, allowed] of Object.entries(readMask)) {
-    if (allowed) {
-      select[field as keyof Prisma.UserSelect] = true
-    }
-  }
-  return select
-}
-
-// Use in query
+```ts
 const decision = policy.checkDetailed('viewUser', { subject, resource })
-const user = await prisma.user.findUnique({
-  where: { id },
-  select: buildPrismaSelect(decision.readMask)
-})
-```
-
-### Drizzle Integration
-
-```typescript
-// Build Drizzle select based on read mask
-// Note: You need to implement this helper function yourself
-function buildDrizzleSelect(readMask?: FieldMask<User>) {
-  if (!readMask) return undefined  // Select all
-
-  const select: { [K in keyof User]?: true } = {}
-  for (const [field, allowed] of Object.entries(readMask)) {
-    if (allowed) {
-      select[field as keyof User] = true
-    }
-  }
-  return select
-}
-
-// Use in query
-const decision = policy.checkDetailed('viewUser', { subject, resource })
-const users = await db
-  .select(buildDrizzleSelect(decision.readMask))
-  .from(usersTable)
-  .where(eq(usersTable.id, userId))
+const user = await prisma.user.findUnique({ where: { id } })
+const safeUser = applyReadMask(user, decision.readMask)
 ```
 
 ## Security Considerations

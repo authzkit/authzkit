@@ -16,9 +16,11 @@ export const db = new Kysely<DB>({/* ... */})
 
 // You need to define your policy first
 const policy = definePolicy({
-  rules: [
-    // Your policy rules here
-  ]
+  byAction: {
+    'doc.read': [
+      { id: 'allow-members', effect: 'allow', when: ({ subject }) => subject?.role === 'member' }
+    ]
+  }
 })
 
 const d = policy.checkDetailed('doc.read', { subject, resource: { tenantId } })
@@ -29,8 +31,7 @@ if (!d.allow) {
 
 const docs = await db
   .selectFrom('doc')
-  .select(d.readMask ? buildKyselySelect(d.readMask) : ['*'])
-  .where(d.attrs ? buildKyselyWhere(d.attrs) : sql`1 = 1`)
+  .selectAll()
+  // Apply filtering with d.attrs and field masking in your response layer as needed
   .execute()
 ```
-

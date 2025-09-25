@@ -13,22 +13,22 @@ A **Policy** is a collection of rules that define what actions are allowed or de
 
 ```typescript
 export const policy = definePolicy<Actions>({
-  rules: [
-    {
-      id: 'admin-full-access',
-      action: 'viewPost',
-      effect: 'allow',
-      when: ({ subject }) => subject.role === 'admin',
-      reason: 'admin-privilege'
-    },
-    {
-      id: 'deny-suspended',
-      action: 'viewPost',
-      effect: 'deny',
-      when: ({ subject }) => subject.status === 'suspended',
-      reason: 'account-suspended'
-    }
-  ]
+  byAction: {
+    viewPost: [
+      {
+        id: 'admin-full-access',
+        effect: 'allow',
+        when: ({ subject }) => subject.role === 'admin',
+        reason: 'admin-privilege'
+      },
+      {
+        id: 'deny-suspended',
+        effect: 'deny',
+        when: ({ subject }) => subject.status === 'suspended',
+        reason: 'account-suspended'
+      }
+    ]
+  }
 })
 ```
 
@@ -72,12 +72,12 @@ If **any** deny rule matches, access is immediately denied, regardless of allow 
 
 ```typescript
 const policy = definePolicy<Actions>({
-  rules: [
+  byAction: {
+    viewPost: [
     // This deny rule will block access even if allow rules match
     {
       id: 'deny-suspended',
       effect: 'deny',
-      action: 'viewPost',
       when: ({ subject }) => subject.status === 'suspended',
       reason: 'account-suspended'
     },
@@ -86,11 +86,11 @@ const policy = definePolicy<Actions>({
     {
       id: 'allow-admin',
       effect: 'allow',
-      action: 'viewPost',
       when: ({ subject }) => subject.role === 'admin',
       reason: 'admin-access'
     }
-  ]
+    ]
+  }
 })
 ```
 
@@ -99,12 +99,12 @@ Among allow rules, the **first** matching rule determines the decision.
 
 ```typescript
 const policy = definePolicy<Actions>({
-  rules: [
+  byAction: {
+    viewPost: [
     // This rule will match first for admins
     {
       id: 'admin-full-access',
       effect: 'allow',
-      action: 'viewPost',
       when: ({ subject }) => subject.role === 'admin',
       readMask: { id: true, title: true, content: true, authorId: true },
       reason: 'admin-access'
@@ -114,12 +114,12 @@ const policy = definePolicy<Actions>({
     {
       id: 'admin-limited',
       effect: 'allow',
-      action: 'viewPost',
       when: ({ subject }) => subject.role === 'admin',
       readMask: { id: true, title: true }, // More restrictive
       reason: 'admin-limited'
     }
-  ]
+    ]
+  }
 })
 ```
 
@@ -176,7 +176,8 @@ Place security rules (denies) at the top:
 
 ```typescript
 const policy = definePolicy<Actions>({
-  rules: [
+  byAction: {
+    viewPost: [
     // Security guardrails first
     { effect: 'deny', when: ({ subject }) => subject.status === 'suspended' },
     { effect: 'deny', when: ({ subject }) => !subject.emailVerified },
@@ -185,7 +186,8 @@ const policy = definePolicy<Actions>({
     // Then permission grants
     { effect: 'allow', when: ({ subject }) => subject.role === 'admin' },
     { effect: 'allow', when: ({ subject, resource }) => subject.id === resource.authorId },
-  ]
+    ]
+  }
 })
 ```
 
@@ -195,11 +197,11 @@ Group rules by role for clarity:
 
 ```typescript
 const policy = definePolicy<Actions>({
-  rules: [
+  byAction: {
+    viewPost: [
     // Admin rules
     {
       id: 'admin-view-all',
-      action: 'viewPost',
       effect: 'allow',
       when: ({ subject }) => subject.role === 'admin',
       readMask: { /* all fields */ },
@@ -209,7 +211,6 @@ const policy = definePolicy<Actions>({
     // Moderator rules
     {
       id: 'moderator-view-tenant',
-      action: 'viewPost',
       effect: 'allow',
       when: ({ subject, resource }) =>
         subject.role === 'moderator' && subject.tenantId === resource.tenantId,
@@ -220,7 +221,6 @@ const policy = definePolicy<Actions>({
     // User rules
     {
       id: 'user-view-published',
-      action: 'viewPost',
       effect: 'allow',
       when: ({ subject, resource }) => ({
         matches: subject.role === 'user' && resource.published,
@@ -229,7 +229,8 @@ const policy = definePolicy<Actions>({
       readMask: { /* limited fields */ },
       reason: 'user-access'
     }
-  ]
+    ]
+  }
 })
 ```
 

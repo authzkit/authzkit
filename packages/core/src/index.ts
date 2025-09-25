@@ -160,14 +160,15 @@ type PolicyActionKey<M extends PolicyActionMap> = Extract<keyof M, string>;
 
 export type ActionInput<M extends PolicyActionMap, A extends PolicyActionKey<M>> = M[A];
 
+// Distribute over action unions so masks and inputs resolve per-action and then union
 export type ActionSubject<M extends PolicyActionMap, A extends PolicyActionKey<M>> =
-  ActionInput<M, A> extends { subject: infer S } ? S : never;
+  A extends PolicyActionKey<M> ? (M[A] extends { subject: infer S } ? S : never) : never;
 
 export type ActionResource<M extends PolicyActionMap, A extends PolicyActionKey<M>> =
-  ActionInput<M, A> extends { resource: infer R } ? R : never;
+  A extends PolicyActionKey<M> ? (M[A] extends { resource: infer R } ? R : never) : never;
 
 export type ActionData<M extends PolicyActionMap, A extends PolicyActionKey<M>> =
-  ActionInput<M, A> extends { data: infer D } ? D : never;
+  A extends PolicyActionKey<M> ? (M[A] extends { data: infer D } ? D : never) : never;
 
 export type ActionReadMask<M extends PolicyActionMap, A extends PolicyActionKey<M>> =
   ActionResource<M, A> extends never ? never : FieldMask<ActionResource<M, A>>;
@@ -192,11 +193,15 @@ export type RuleEvaluator<M extends PolicyActionMap, A extends PolicyActionKey<M
   input: PolicyInput<M, A>,
 ) => boolean | RuleMatchDetails<M, A>;
 
+// Allow function parameters to be bivariant for ergonomics when specifying per-action handlers
+// This mirrors TS's behavior for method parameters and reduces friction with union action keys.
+type Bivariant<T> = { bivarianceHack: T }['bivarianceHack'];
+
 type MaskFactoryValue<M extends PolicyActionMap, A extends PolicyActionKey<M>, T> = [
   T,
 ] extends [never]
   ? undefined
-  : T | ((input: PolicyInput<M, A>) => T | undefined);
+  : T | Bivariant<(input: PolicyInput<M, A>) => T | undefined>;
 
 export interface PolicyRule<
   M extends PolicyActionMap,
@@ -205,7 +210,8 @@ export interface PolicyRule<
   id: string;
   action: A | readonly A[];
   effect: PolicyEffect;
-  when?: RuleEvaluator<M, A>;
+  // Method form makes the parameter bivariant for ergonomics with union action keys
+  when?(input: PolicyInput<M, A>): boolean | RuleMatchDetails<M, A>;
   reason?: string;
   meta?: Record<string, unknown>;
   readMask?: MaskFactoryValue<M, A, ActionReadMask<M, A>>;
@@ -247,6 +253,14 @@ export interface PolicyConfig<M extends PolicyActionMap> {
   rules: ReadonlyArray<PolicyRule<M>>;
   defaultDecision?: PolicyDecisionFactory<M>;
 }
+
+export type PolicyRulesByAction<
+  M extends PolicyActionMap,
+> = {
+  [A in PolicyActionKey<M>]?: ReadonlyArray<
+    Omit<PolicyRule<M, A>, 'action'>
+  >;
+};
 
 export type PolicyInput<
   M extends PolicyActionMap,
@@ -320,12 +334,57 @@ const normaliseDecision = <M extends PolicyActionMap, A extends PolicyActionKey<
  * });
  * ```
  */
-export const definePolicy = <M extends PolicyActionMap>(
-  config: PolicyConfig<M>,
-): Policy<M> => {
-  const rules = [...config.rules];
+// Overload to improve inference of the action key per rule from the 'action' field
+export function definePolicy<
+  M extends PolicyActionMap,
+  R extends ReadonlyArray<PolicyRule<M, PolicyActionKey<M>>>,
+>(config: { rules: R; defaultDecision?: PolicyDecisionFactory<M> }): Policy<M>;
+export function definePolicy<
+  M extends PolicyActionMap,
+>(config: { byAction: PolicyRulesByAction<M>; defaultDecision?: PolicyDecisionFactory<M> }): Policy<M>;
+export function definePolicy<
+  M extends PolicyActionMap,
+  R extends ReadonlyArray<PolicyRule<M, PolicyActionKey<M>>>,
+>(...rules: R): Policy<M>;
+export function definePolicy<M extends PolicyActionMap>(config: PolicyConfig<M>): Policy<M>;
+export function definePolicy<M extends PolicyActionMap>(
+  ...args: ReadonlyArray<unknown>
+): Policy<M> {
+  const isConfig = (
+    value: unknown,
+  ): value is PolicyConfig<M> | { rules: ReadonlyArray<PolicyRule<M>>; defaultDecision?: PolicyDecisionFactory<M> } =>
+    typeof value === 'object' && value !== null && 'rules' in (value as Record<string, unknown>);
+  const isByActionConfig = (
+    value: unknown,
+  ): value is { byAction: PolicyRulesByAction<M>; defaultDecision?: PolicyDecisionFactory<M> } =>
+    typeof value === 'object' && value !== null && 'byAction' in (value as Record<string, unknown>);
+  let cfg: PolicyConfig<M>;
+  if (args.length === 1) {
+    const single = args[0];
+    if (isConfig(single)) {
+      cfg = single as PolicyConfig<M>;
+    } else if (isByActionConfig(single)) {
+      const map = (single as { byAction: PolicyRulesByAction<M> }).byAction;
+      const flattened: PolicyRule<M>[] = [];
+      for (const a of Object.keys(map) as PolicyActionKey<M>[]) {
+        const list = map[a];
+        if (!list) continue;
+        for (const r of list) {
+          flattened.push({ action: a, ...r } as PolicyRule<M>);
+        }
+      }
+      const dd = (single as { defaultDecision?: PolicyDecisionFactory<M> }).defaultDecision;
+      cfg = { rules: flattened, ...(dd !== undefined ? { defaultDecision: dd } : {}) } as PolicyConfig<M>;
+    } else {
+      cfg = { rules: [] } as PolicyConfig<M>;
+    }
+  } else {
+    cfg = ({ rules: args as ReadonlyArray<PolicyRule<M>> } as PolicyConfig<M>);
+  }
+
+  const rules = [...cfg.rules];
   const defaultDecision: PolicyDecisionFactory<M> =
-    config.defaultDecision ??
+    cfg.defaultDecision ??
     ((ctx) => ({
       allow: false,
       reason: DEFAULT_REASON,
@@ -343,13 +402,13 @@ export const definePolicy = <M extends PolicyActionMap>(
       return undefined;
     }
 
-    const evaluator = rule.when as RuleEvaluator<M, A> | undefined;
-
-    if (!evaluator) {
+    if (!rule.when) {
       return buildDecision(rule, action, input, undefined);
     }
 
-    const outcome = evaluator(input);
+    const outcome = (rule.when as (input: PolicyInput<M, A>) => boolean | RuleMatchDetails<M, A>)(
+      input,
+    );
     if (typeof outcome === 'boolean') {
       return outcome ? buildDecision(rule, action, input, undefined) : undefined;
     }
@@ -453,4 +512,4 @@ export const definePolicy = <M extends PolicyActionMap>(
     checkDetailed,
     describe,
   };
-};
+}

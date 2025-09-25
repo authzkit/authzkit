@@ -60,9 +60,11 @@ import { definePolicy } from '@authzkit/core'
 
 // You need to define your policy first
 const policy = definePolicy({
-  rules: [
-    // Your policy rules here
-  ]
+  byAction: {
+    'post.read': [
+      { id: 'allow-members', effect: 'allow', when: ({ subject }) => subject?.role === 'member' }
+    ]
+  }
 })
 
 const decision = policy.checkDetailed('post.read', { subject, resource: { tenantId } })
@@ -73,12 +75,9 @@ if (!decision.allow) {
 
 const posts = await prisma.post.findMany({
   // Apply filtering based on decision attributes if needed
-  where: decision.attrs || {},
-  // Apply field masking if readMask is provided
-  select: decision.readMask ? buildSelectFromMask(decision.readMask) : undefined,
+  where: decision.attrs || {}
 })
-
-// Note: You need to implement buildSelectFromMask helper yourself
+// Apply field masking in your response layer using decision.readMask (no ORM helper is provided)
 ```
 
 Validate schema & paths:

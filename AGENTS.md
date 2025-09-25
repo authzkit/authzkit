@@ -1,42 +1,47 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-
-AuthzKit ships as a pnpm workspace monorepo. Key folders:
-
-- `packages/core` holds the type-safe policy engine and shared utilities.
-- `packages/prisma-tenant-guard` contains the tenant guard extension, generator, CLI, and Zod helpers.
-- `packages/adapters/*` provide Prisma, Drizzle, Kysely, Next.js, and RPC integrations.
-- `docs/` and `stories/` house guides, reference snippets, and UI guard demos.
-- `.changeset/` tracks release notes; `.github/` carries CI workflows and issue templates.
+AuthzKit is a pnpm workspace monorepo:
+- `packages/core` — type-safe policy engine + shared utilities.
+- `packages/prisma-tenant-guard` — tenant guard extension, generator, CLI, Zod helpers.
+- `packages/adapters/*` — Prisma, Drizzle, Kysely, Next.js, and RPC integrations.
+- `docs/`, `stories/` — guides, reference snippets, UI guard demos.
+- `.changeset/` — release notes; `.github/` — CI workflows + templates.
+Tests live beside sources: `*.spec.ts`, `*.test-d.ts`.
 
 ## Build, Test, and Development Commands
-
-Install dependencies once with `pnpm install`.
-
-```bash
-pnpm build         # Compile all packages via tsup
-pnpm dev           # Run package watchers + Vitest in parallel
-pnpm lint          # ESLint + Prettier checks
-pnpm test          # Vitest with coverage thresholds
-pnpm typecheck     # Strict TypeScript validation
-pnpm release       # Publish via Changesets (maintainers only)
-```
-
-Run commands from the repo root unless a package exposes a package-specific script.
+Run from repo root after `pnpm install`:
+- `pnpm build` — compile all packages via tsup.
+- `pnpm dev` — watch packages and run Vitest in parallel.
+- `pnpm lint` — ESLint + Prettier checks; `pnpm format` to fix.
+- `pnpm test` — Vitest with coverage thresholds.
+- `pnpm typecheck` — strict TypeScript validation.
+- `pnpm release` — publish via Changesets (maintainers only).
 
 ## Coding Style & Naming Conventions
-
-Use 2-space indentation, trailing commas, and ESM-first imports. Public APIs are TypeScript-first with `strict`, `noUncheckedIndexedAccess`, and `exactOptionalPropertyTypes` enabled. Prefer `camelCase` for variables/functions, `PascalCase` for types/components, and `kebab-case` package names. Keep policy definitions declarative and colocated with their adapters. Run `pnpm lint` and `pnpm format` before submitting; the Husky pre-commit hook mirrors CI linting.
+- 2-space indentation, trailing commas, ESM-first imports.
+- TypeScript strict mode with `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`.
+- Naming: `camelCase` (vars/functions), `PascalCase` (types/components), `kebab-case` (packages).
+- Keep policy definitions declarative and colocated with their adapters.
+- Run `pnpm lint` and `pnpm format` before submitting; Husky mirrors CI.
 
 ## Testing Guidelines
-
-Unit and type tests live beside source files (`*.spec.ts`, `*.test-d.ts`). Use Vitest for behaviour, `tsd` or `expectTypeOf` for type safety, and snapshot fixtures for policy matrices. Maintain ≥90% coverage in `packages/core`, ≥95% in tenant guard, and ≥85% for adapters. For integration checks.
+- Frameworks: Vitest for behavior; `tsd` or `expectTypeOf` for types.
+- Coverage: `packages/core` ≥90%, tenant guard ≥95%, adapters ≥85%.
+- Use snapshot fixtures for policy matrices.
+- Conventions: co-locate tests (`*.spec.ts`, `*.test-d.ts`).
 
 ## Commit & Pull Request Guidelines
-
-Follow Conventional Commits (`feat(core):`, `fix(adapter-prisma):`, etc.). The default branch is `master`; open PRs against `master` unless otherwise coordinated. Each commit should compile and pass tests. PRs must include: a clear summary, linked issue (if any), testing notes, and updated docs or Changeset when user-facing behaviour changes. Add screenshots or CLI transcripts when touching devtools or tenant guard diagnostics. Request review from a maintainer who owns the affected package; green CI is required before merge.
+- Conventional Commits (e.g., `feat(core): …`, `fix(adapter-prisma): …`).
+- Default branch: `master`; open PRs against `master`.
+- Each commit must build and pass tests.
+- PRs include a clear summary, linked issues, testing notes, and docs/Changeset when user-facing behavior changes. Add screenshots or CLI transcripts for devtools/tenant guard diagnostics. Request review from relevant maintainer; green CI required.
 
 ## Security & Configuration Tips
+- Default to fail-closed policies; do not bypass tenant guard in examples.
+- Validate Prisma schema updates: `pnpm prisma-tenant-guard check`.
+- Document required env vars in `docs/security.md`; confirm RLS emitters flag unsafe paths.
 
-Default to fail-closed policies; never bypass tenant guard in examples. Validate Prisma schema updates with the tenant guard CLI (`pnpm prisma-tenant-guard check`). When adding new adapters, document required environment variables under `docs/security.md` and confirm RLS emitters flag unsafe paths.
+## Agent-Specific Instructions
+These guidelines apply repo-wide. Prefer minimal, focused changes that match existing style; do not fix unrelated issues. Validate locally with `pnpm typecheck` and `pnpm test` before proposing patches, and update docs/Changesets when behavior changes.
+

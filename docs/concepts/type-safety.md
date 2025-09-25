@@ -74,29 +74,30 @@ Policy rules are fully typed based on your action definitions:
 
 ```typescript
 const policy = definePolicy<Actions>({
-  rules: [
-    {
-      id: 'user-edit-own-post',
-      action: 'editPost',  // TypeScript validates this action exists
-      effect: 'allow',
-      when: ({ subject, resource, changes }) => {
-        // TypeScript knows the exact types of all parameters:
-        // subject: User
-        // resource: Post
-        // changes: Partial<Pick<Post, 'title' | 'content'>>
+  byAction: {
+    editPost: [
+      {
+        id: 'user-edit-own-post',
+        effect: 'allow',
+        when: ({ subject, resource, changes }) => {
+          // TypeScript knows the exact types of all parameters:
+          // subject: User
+          // resource: Post
+          // changes: Partial<Pick<Post, 'title' | 'content'>>
 
-        return subject.id === resource.authorId
-      },
-      readMask: {
-        id: true,
-        title: true,
-        content: true,
-        // TypeScript error if field doesn't exist on Post:
-        // invalidField: true,  // ❌ Compile error
-      } satisfies FieldMask<Post>,
-      reason: 'post-owner'
-    }
-  ]
+          return subject.id === resource.authorId
+        },
+        readMask: {
+          id: true,
+          title: true,
+          content: true,
+          // TypeScript error if field doesn't exist on Post:
+          // invalidField: true,  // ❌ Compile error
+        } satisfies FieldMask<Post>,
+        reason: 'post-owner'
+      }
+    ]
+  }
 })
 ```
 

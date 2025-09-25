@@ -50,9 +50,8 @@ import { prisma } from './prisma/client'
 const d = policy.checkDetailed('post.read', { subject, resource: { tenantId } })
 const posts = await prisma.post.findMany({
   where: d.attrs || {},
-  select: d.readMask ? buildSelectFromMask(d.readMask) : undefined,
 })
-// Note: You need to implement buildSelectFromMask helper yourself
+// Apply field masking in your response layer using d.readMask (no ORM helper is provided)
 ```
 
 ## CLI + generator
@@ -76,4 +75,3 @@ Validate in CI:
 - [Guide](https://authzkit.github.io/authzkit/docs/guides/tenant-guard)
 - [RLS recipe](https://authzkit.github.io/authzkit/docs/recipes/prisma-rls)
 - [CLI reference](https://authzkit.github.io/authzkit/docs/reference/cli)
-

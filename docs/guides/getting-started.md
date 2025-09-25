@@ -78,24 +78,24 @@ Policies stay fully typed, return read/write masks, and can expose human-readabl
 
 ```ts
 const policy = definePolicy<AppActions>({
-  rules: [
-    {
-      id: 'owner-can-edit',
-      action: 'post.update',
-      effect: 'allow',
-      when: ({ subject, resource }) => subject.id === resource.authorId,
-      writeMask: { title: true, body: true },
-      reason: 'OWNER_REQUIRED',
-    },
-    {
-      id: 'draft-only-editors',
-      action: 'post.update',
-      effect: 'deny',
-      when: ({ subject, resource }) =>
-        subject.role !== 'editor' && resource.status === 'published',
-      reason: 'ROLE_INSUFFICIENT',
-    },
-  ],
+  byAction: {
+    'post.update': [
+      {
+        id: 'owner-can-edit',
+        effect: 'allow',
+        when: ({ subject, resource }) => subject.id === resource.authorId,
+        writeMask: { title: true, body: true },
+        reason: 'OWNER_REQUIRED',
+      },
+      {
+        id: 'draft-only-editors',
+        effect: 'deny',
+        when: ({ subject, resource }) =>
+          subject.role !== 'editor' && resource.status === 'published',
+        reason: 'ROLE_INSUFFICIENT',
+      },
+    ],
+  },
 });
 ```
 

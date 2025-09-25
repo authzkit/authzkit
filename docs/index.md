@@ -139,12 +139,13 @@ Define policies once, enforce everywhere automatically:
 ```typescript [✅ AuthzKit Policies]
 // Define once - centralized and type-safe
 const policy = definePolicy({
-  rules: [{
-    action: 'post.edit',
-    effect: 'allow',
-    when: ({ subject, resource }) =>
-      subject.id === resource.authorId || subject.role === 'admin'
-  }]
+  byAction: {
+    'post.edit': [{
+      effect: 'allow',
+      when: ({ subject, resource }) =>
+        subject.id === resource.authorId || subject.role === 'admin'
+    }]
+  }
 })
 
 // Use everywhere - automatic enforcement
@@ -158,9 +159,7 @@ if (!decision.allow) {
 // Apply field masking using readMask
 const posts = await prisma.post.findMany({
   // Apply any filtering based on decision attributes
-  where: decision.attrs ? buildWhereClause(decision.attrs) : {},
-  // Apply field masking based on readMask
-  select: decision.readMask ? buildSelectClause(decision.readMask) : undefined
+  where: decision.attrs || {}
 })
 ```
 

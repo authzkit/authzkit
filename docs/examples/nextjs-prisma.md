@@ -102,11 +102,13 @@ export const prisma = createTenantClient(new PrismaClient(), {
 import { definePolicy } from '@authzkit/core'
 import { prisma } from '@/prisma/client'
 
-// You need to define your policy first
+// You need to define your policy first (group rules by action)
 const policy = definePolicy({
-  rules: [
-    // Your policy rules here
-  ]
+  byAction: {
+    'post.read': [
+      { id: 'allow-members', effect: 'allow', when: ({ subject }) => subject?.role === 'member' }
+    ]
+  }
 })
 
 export default async function PostsPage() {
@@ -117,9 +119,7 @@ export default async function PostsPage() {
 
   const posts = await prisma.post.findMany({
     // Apply filtering based on decision attributes if needed
-    where: d.attrs ? buildPrismaWhere(d.attrs) : {},
-    // Apply field masking if readMask is provided
-    select: d.readMask ? buildPrismaSelect(d.readMask) : undefined
+    where: d.attrs || {}
   })
   return <pre>{JSON.stringify(posts, null, 2)}</pre>
 }

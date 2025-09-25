@@ -18,9 +18,11 @@ export const db = drizzle(connection)
 // usage
 // You need to define your policy first
 const policy = definePolicy({
-  rules: [
-    // Your policy rules here
-  ]
+  byAction: {
+    'invoice.read': [
+      { id: 'allow-members', effect: 'allow', when: ({ subject }) => subject?.role === 'member' }
+    ]
+  }
 })
 
 const d = policy.checkDetailed('invoice.read', { subject, resource: { tenantId } })
@@ -30,9 +32,8 @@ if (!d.allow) {
 }
 
 const rows = await db
-  .select(d.readMask ? buildDrizzleSelect(d.readMask) : {})
   .from(invoice)
-  .where(d.attrs ? buildDrizzleWhere(d.attrs) : sql`1 = 1`)
+  // Apply filtering with d.attrs and field masking in your response layer as needed
 ```
 
 See also: [Postgres RLS with Tenant Guard](/recipes/prisma-rls) for RLS notes applicable to any SQL adapter.

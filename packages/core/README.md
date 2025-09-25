@@ -31,21 +31,21 @@ const actions = defineActions({
 });
 
 const policy = definePolicy<typeof actions>({
-  rules: [
-    {
-      id: 'owner-can-edit',
-      action: 'post.update',
-      effect: 'allow',
-      when: ({ subject, resource }) => subject.id === resource.authorId,
-      writeMask: { title: true, body: true },
-    },
-    {
-      id: 'no-edit-published',
-      action: 'post.update',
-      effect: 'deny',
-      when: ({ resource }) => resource.status === 'published',
-    },
-  ],
+  byAction: {
+    'post.update': [
+      {
+        id: 'owner-can-edit',
+        effect: 'allow',
+        when: ({ subject, resource }) => subject.id === resource.authorId,
+        writeMask: { title: true, body: true },
+      },
+      {
+        id: 'no-edit-published',
+        effect: 'deny',
+        when: ({ resource }) => resource.status === 'published',
+      },
+    ],
+  },
 });
 
 // Evaluate once and reuse everywhere
