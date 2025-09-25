@@ -53,6 +53,18 @@
   color: #d4d4d4 !important;
 }
 
-/* Footer positioned via slots: doc-after on docs (no extra margins), layout-bottom on home */
+/* Footer uses layout-bottom for all pages; adjust on docs to align with sidenav */
+.VPDoc .authzkit-footer {
+  margin: 0;
+  width: calc(100% - var(--vp-sidebar-width, 272px));
+  margin-left: var(--vp-sidebar-width, 272px);
+}
+
+@media (max-width: 960px) {
+  .VPDoc .authzkit-footer {
+    width: 100%;
+    margin-left: 0;
+  }
+}
 
 /* Revert to standard VitePress sidebar behavior (no custom collapse) */
