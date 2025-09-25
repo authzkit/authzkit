@@ -9,19 +9,19 @@
       <div class="footer-section">
         <h4>Documentation</h4>
         <ul>
-          <li><router-link to="/guides/getting-started">Getting Started</router-link></li>
-          <li><router-link to="/concepts/">Core Concepts</router-link></li>
-          <li><router-link to="/examples/">Examples</router-link></li>
-          <li><router-link to="/recipes/">Recipes</router-link></li>
+          <li><a href="/authzkit/guides/getting-started.html">Getting Started</a></li>
+          <li><a href="/authzkit/concepts/">Core Concepts</a></li>
+          <li><a href="/authzkit/examples/">Examples</a></li>
+          <li><a href="/authzkit/recipes/">Recipes</a></li>
         </ul>
       </div>
 
       <div class="footer-section">
         <h4>Tools</h4>
         <ul>
-          <li><router-link to="/tenant-guard/">Tenant Guard</router-link></li>
-          <li><router-link to="/reference/cli">CLI Reference</router-link></li>
-          <li><router-link to="/reference/migrations">Migrations</router-link></li>
+          <li><a href="/authzkit/tenant-guard/">Tenant Guard</a></li>
+          <li><a href="/authzkit/reference/cli.html">CLI Reference</a></li>
+          <li><a href="/authzkit/reference/migrations.html">Migrations</a></li>
         </ul>
       </div>
 
@@ -29,7 +29,7 @@
         <h4>Community</h4>
         <ul>
           <li><a href="https://github.com/authzkit/authzkit" target="_blank">GitHub</a></li>
-          <li><router-link to="/roadmap">Roadmap</router-link></li>
+          <li><a href="/authzkit/roadmap.html">Roadmap</a></li>
         </ul>
       </div>
     </div>
@@ -86,15 +86,13 @@
   margin-bottom: 8px;
 }
 
-.footer-section a,
-.footer-section :deep(a) {
+.footer-section a {
   color: var(--vp-c-text-2);
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
-.footer-section a:hover,
-.footer-section :deep(a):hover {
+.footer-section a:hover {
   color: var(--vp-c-brand-1);
 }
 

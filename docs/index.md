@@ -7,7 +7,7 @@ title: AuthzKit
   text="The last authorization library you'll need."
   tagline="Define policies once, get database filters, UI guards, and API protection automatically — for both JavaScript and TypeScript."
   :actions="[
-    { theme: 'brand', text: 'Get started', link: '/guides/getting-started' },
+    { theme: 'brand', text: 'Get started', link: '/authzkit/guides/getting-started.html' },
   ]"
 />
 
