@@ -20,7 +20,7 @@
     "docs:dev": "pnpm typecheck-all && vitepress dev docs",
     "docs:build": "pnpm typecheck-all && vitepress build docs",
     "docs:preview": "pnpm typecheck-all && vitepress preview docs",
-    "release": "pnpm typecheck-all && changeset publish"
+    "release": "pnpm build-only && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.28.1",
